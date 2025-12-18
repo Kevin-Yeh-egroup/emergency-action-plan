@@ -5,8 +5,25 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { AlertCircle, Home, RefreshCw } from "lucide-react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 
 export default function NotFound() {
+  const searchParams = useSearchParams()
+  const errorId = searchParams?.get("errorId") || searchParams?.get("id")
+  const errorCode = searchParams?.get("code")
+
+  useEffect(() => {
+    // 記錄 404 錯誤
+    if (typeof window !== "undefined") {
+      console.error("404 錯誤:", {
+        path: window.location.pathname,
+        errorId,
+        errorCode,
+        timestamp: new Date().toISOString(),
+      })
+    }
+  }, [errorId, errorCode])
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <Card className="p-8 max-w-md w-full text-center space-y-6">
@@ -22,6 +39,16 @@ export default function NotFound() {
           <p className="text-sm text-muted-foreground">
             抱歉，您要尋找的頁面不存在或已被移除。
           </p>
+          {errorId && (
+            <p className="text-xs text-muted-foreground font-mono mt-2">
+              錯誤 ID: {errorId}
+            </p>
+          )}
+          {errorCode && (
+            <p className="text-xs text-muted-foreground mt-1">
+              錯誤代碼: {errorCode}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
