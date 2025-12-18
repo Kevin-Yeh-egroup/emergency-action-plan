@@ -74,3 +74,5 @@ export function formatCurrencyRange(range: string): string {
   return `${prefix}${currency1}${formattedNum1}`
 }
 
+
+
