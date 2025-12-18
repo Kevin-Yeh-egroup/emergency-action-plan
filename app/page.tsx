@@ -36,7 +36,7 @@ export default function EmergencyAssistancePage() {
 
   const handleScenarioSelect = (scenario: string) => {
     setSelectedScenario(scenario)
-    goToStep("input", "我們正在整理你的情境\n不需要一次講完整\n先把你最在意的那件事放上來就好")
+    goToStep("input", "我們正在整理你的情境\n請自在的輸入或告訴我們您的情況")
   }
 
   const handleUserInputSubmit = (data: { text: string; files: File[] }) => {
@@ -83,6 +83,7 @@ export default function EmergencyAssistancePage() {
         <AssessmentResult
           score={assessmentScore}
           data={assessmentData}
+          userInput={userInputData}
           onContinue={() => setCurrentStep("action")}
           onAIChat={() => setCurrentStep("ai-chat")}
         />

@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
+import { formatNumber, formatCurrencyRange } from "@/lib/format-number"
 
 interface QuickAssessmentProps {
   onComplete: (score: number, data: any) => void
@@ -16,7 +17,6 @@ const assessmentCategories = [
   {
     id: "economic",
     title: "A. 經濟資源",
-    maxScore: 25,
     questions: [
       {
         id: "income",
@@ -74,7 +74,6 @@ const assessmentCategories = [
   {
     id: "emergency",
     title: "B. 應急能力",
-    maxScore: 15,
     questions: [
       {
         id: "funding",
@@ -108,14 +107,152 @@ const assessmentCategories = [
       },
     ],
   },
+  {
+    id: "financial",
+    title: "C. 金融包容性",
+    questions: [
+      {
+        id: "bank_account",
+        label: "銀行帳戶",
+        options: [
+          { value: "5", label: "有", score: 5 },
+          { value: "0", label: "無", score: 0 },
+        ],
+      },
+      {
+        id: "bank_service",
+        label: "銀行服務使用",
+        options: [
+          { value: "5", label: "熟練", score: 5 },
+          { value: "3", label: "基本會用", score: 3 },
+          { value: "1", label: "不太會用", score: 1 },
+          { value: "0", label: "從未用過", score: 0 },
+        ],
+      },
+      {
+        id: "financial_access",
+        label: "金融服務可近性",
+        options: [
+          { value: "5", label: "容易獲得", score: 5 },
+          { value: "3", label: "普通", score: 3 },
+          { value: "0", label: "困難", score: 0 },
+        ],
+      },
+    ],
+  },
+  {
+    id: "management",
+    title: "D. 財務管理能力",
+    questions: [
+      {
+        id: "budget",
+        label: "預算規劃",
+        options: [
+          { value: "5", label: "有", score: 5 },
+          { value: "3", label: "偶爾", score: 3 },
+          { value: "0", label: "無", score: 0 },
+        ],
+      },
+      {
+        id: "accounting",
+        label: "記帳習慣",
+        options: [
+          { value: "5", label: "有", score: 5 },
+          { value: "3", label: "偶爾", score: 3 },
+          { value: "0", label: "無", score: 0 },
+        ],
+      },
+      {
+        id: "saving_habit",
+        label: "儲蓄習慣",
+        options: [
+          { value: "5", label: "定期", score: 5 },
+          { value: "3", label: "偶爾", score: 3 },
+          { value: "0", label: "無", score: 0 },
+        ],
+      },
+      {
+        id: "financial_knowledge",
+        label: "金融知識",
+        options: [
+          { value: "5", label: "良好", score: 5 },
+          { value: "3", label: "普通", score: 3 },
+          { value: "0", label: "不足", score: 0 },
+        ],
+      },
+    ],
+  },
+  {
+    id: "social",
+    title: "E. 社會資本",
+    questions: [
+      {
+        id: "family_support",
+        label: "親友支持",
+        options: [
+          { value: "5", label: "多", score: 5 },
+          { value: "3", label: "一些", score: 3 },
+          { value: "1", label: "很少", score: 1 },
+          { value: "0", label: "無", score: 0 },
+        ],
+      },
+      {
+        id: "community",
+        label: "社區連結",
+        options: [
+          { value: "5", label: "強", score: 5 },
+          { value: "3", label: "中等", score: 3 },
+          { value: "1", label: "弱", score: 1 },
+          { value: "0", label: "無", score: 0 },
+        ],
+      },
+      {
+        id: "social_resources",
+        label: "社會資源了解",
+        options: [
+          { value: "5", label: "熟悉", score: 5 },
+          { value: "3", label: "普通", score: 3 },
+          { value: "0", label: "不熟", score: 0 },
+        ],
+      },
+    ],
+  },
+  {
+    id: "resilience",
+    title: "F. 心理韌性",
+    questions: [
+      {
+        id: "financial_stress",
+        label: "財務壓力感",
+        options: [
+          { value: "5", label: "低", score: 5 },
+          { value: "3", label: "中", score: 3 },
+          { value: "0", label: "高", score: 0 },
+        ],
+      },
+      {
+        id: "future_confidence",
+        label: "未來信心",
+        options: [
+          { value: "5", label: "高", score: 5 },
+          { value: "3", label: "中", score: 3 },
+          { value: "0", label: "低", score: 0 },
+        ],
+      },
+    ],
+  },
 ]
 
 export default function QuickAssessment({ onComplete, onBack }: QuickAssessmentProps) {
-  const [currentCategory, setCurrentCategory] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
+  const questionRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
-  const category = assessmentCategories[currentCategory]
+  const currentCategory = assessmentCategories[currentPage]
+  
+  // 計算總題數
   const totalQuestions = assessmentCategories.reduce((sum, cat) => sum + cat.questions.length, 0)
+  
   const answeredQuestions = Object.keys(answers).length
   const progress = (answeredQuestions / totalQuestions) * 100
 
@@ -133,9 +270,39 @@ export default function QuickAssessment({ onComplete, onBack }: QuickAssessmentP
     return totalScore
   }
 
+  // 檢查當前頁面所有問題是否已回答
+  const allPageQuestionsAnswered = currentCategory.questions.every((q) => answers[q.id])
+
+  // 找到第一個未回答的問題
+  const findFirstUnansweredQuestion = () => {
+    return currentCategory.questions.find((q) => !answers[q.id])
+  }
+
+  const scrollToUnansweredQuestion = () => {
+    const firstUnanswered = findFirstUnansweredQuestion()
+    if (firstUnanswered) {
+      const questionElement = questionRefs.current[firstUnanswered.id]
+      if (questionElement) {
+        questionElement.scrollIntoView({ behavior: "smooth", block: "center" })
+        // 添加高亮效果
+        questionElement.classList.add("ring-2", "ring-primary", "ring-offset-2")
+        setTimeout(() => {
+          questionElement.classList.remove("ring-2", "ring-primary", "ring-offset-2")
+        }, 2000)
+      }
+    }
+  }
+
   const handleNext = () => {
-    if (currentCategory < assessmentCategories.length - 1) {
-      setCurrentCategory(currentCategory + 1)
+    if (!allPageQuestionsAnswered) {
+      scrollToUnansweredQuestion()
+      return
+    }
+
+    if (currentPage < assessmentCategories.length - 1) {
+      setCurrentPage(currentPage + 1)
+      // 滾動到頁面頂部
+      window.scrollTo({ top: 0, behavior: "smooth" })
     } else {
       const finalScore = calculateScore()
       onComplete(finalScore, answers)
@@ -143,14 +310,13 @@ export default function QuickAssessment({ onComplete, onBack }: QuickAssessmentP
   }
 
   const handleBack = () => {
-    if (currentCategory > 0) {
-      setCurrentCategory(currentCategory - 1)
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1)
+      window.scrollTo({ top: 0, behavior: "smooth" })
     } else {
       onBack()
     }
   }
-
-  const allCategoryQuestionsAnswered = category.questions.every((q) => answers[q.id])
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -164,7 +330,7 @@ export default function QuickAssessment({ onComplete, onBack }: QuickAssessmentP
               <div className="flex justify-between text-sm">
                 <span>總進度</span>
                 <span>
-                  {answeredQuestions} / {totalQuestions}
+                  {formatNumber(answeredQuestions)} / {formatNumber(totalQuestions)}
                 </span>
               </div>
               <Progress value={progress} />
@@ -174,29 +340,42 @@ export default function QuickAssessment({ onComplete, onBack }: QuickAssessmentP
 
         <Card className="p-6 space-y-6">
           <div className="space-y-2">
-            <h2 className="text-2xl font-semibold">{category.title}</h2>
+            <h2 className="text-2xl font-semibold">{currentCategory.title}</h2>
             <p className="text-sm text-muted-foreground">
-              卡片 {currentCategory + 1}/{assessmentCategories.length}
+              第 {formatNumber(currentPage + 1)} 頁，共 {formatNumber(assessmentCategories.length)} 頁
             </p>
           </div>
 
           <div className="space-y-6">
-            {category.questions.map((question) => (
-              <div key={question.id} className="space-y-3">
+            {currentCategory.questions.map((question) => (
+              <div
+                key={question.id}
+                ref={(el) => {
+                  questionRefs.current[question.id] = el
+                }}
+                className="space-y-3 transition-all duration-300 rounded-lg p-2"
+              >
                 <Label className="text-base font-medium">{question.label}</Label>
                 <RadioGroup
                   value={answers[question.id] || ""}
                   onValueChange={(value) => setAnswers({ ...answers, [question.id]: value })}
                 >
                   <div className="space-y-2">
-                    {question.options.map((option) => (
-                      <div key={option.value} className="flex items-center space-x-2">
-                        <RadioGroupItem value={option.value} id={`${question.id}-${option.value}`} />
-                        <Label htmlFor={`${question.id}-${option.value}`} className="font-normal cursor-pointer">
-                          {option.label}
-                        </Label>
-                      </div>
-                    ))}
+                    {question.options.map((option) => {
+                      // 格式化包含金額的標籤，確保有千分號
+                      const formattedLabel = option.label.includes("NT$") 
+                        ? formatCurrencyRange(option.label.replace(/,/g, ""))
+                        : option.label
+                      
+                      return (
+                        <div key={option.value} className="flex items-center space-x-2">
+                          <RadioGroupItem value={option.value} id={`${question.id}-${option.value}`} />
+                          <Label htmlFor={`${question.id}-${option.value}`} className="font-normal cursor-pointer">
+                            {formattedLabel}
+                          </Label>
+                        </div>
+                      )
+                    })}
                   </div>
                 </RadioGroup>
               </div>
@@ -208,8 +387,8 @@ export default function QuickAssessment({ onComplete, onBack }: QuickAssessmentP
           <Button variant="outline" onClick={handleBack} className="flex-1 bg-transparent">
             返回
           </Button>
-          <Button onClick={handleNext} className="flex-1" disabled={!allCategoryQuestionsAnswered}>
-            {currentCategory < assessmentCategories.length - 1 ? "下一步" : "完成快篩"}
+          <Button onClick={handleNext} className="flex-1">
+            {currentPage < assessmentCategories.length - 1 ? "下一步" : "完成快篩"}
           </Button>
         </div>
       </div>

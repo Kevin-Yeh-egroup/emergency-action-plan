@@ -3,15 +3,18 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, CheckCircle2, AlertTriangle } from "lucide-react"
+import { formatNumber } from "@/lib/format-number"
+import { identifyPriorityInterventions } from "@/lib/assessment-analyzer"
 
 interface AssessmentResultProps {
   score: number
   data: any
+  userInput?: { text: string; files: File[] }
   onContinue: () => void
   onAIChat: () => void
 }
 
-export default function AssessmentResult({ score, data, onContinue, onAIChat }: AssessmentResultProps) {
+export default function AssessmentResult({ score, data, userInput = { text: "", files: [] }, onContinue, onAIChat }: AssessmentResultProps) {
   const getLevel = () => {
     if (score >= 75) return { level: "財務韌性良好", color: "text-green-600", icon: CheckCircle2, signal: "🟢" }
     if (score >= 60) return { level: "接近韌性", color: "text-blue-600", icon: AlertTriangle, signal: "🟡" }
@@ -41,7 +44,7 @@ export default function AssessmentResult({ score, data, onContinue, onAIChat }: 
             <div>
               <p className="text-sm text-muted-foreground mb-2">總分</p>
               <p className="text-5xl font-bold">
-                {score} <span className="text-2xl text-muted-foreground">/ 100</span>
+                {formatNumber(score)} <span className="text-2xl text-muted-foreground">/ {formatNumber(100)}</span>
               </p>
             </div>
             <div>
@@ -100,13 +103,39 @@ export default function AssessmentResult({ score, data, onContinue, onAIChat }: 
         <Card className="p-6 space-y-4">
           <h2 className="text-xl font-semibold">優先介入面向識別</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {["緊急經濟援助", "債務管理", "儲蓄培養", "金融教育", "就業支持", "金融服務連結"].map((item) => (
-              <div key={item} className="flex items-center gap-2 text-sm">
-                <input type="checkbox" defaultChecked className="rounded" />
-                <span>{item}</span>
-              </div>
-            ))}
+            {(() => {
+              const allInterventions = ["緊急經濟援助", "債務管理", "儲蓄培養", "金融教育", "就業支持", "金融服務連結"]
+              const priorityInterventions = identifyPriorityInterventions(data, userInput)
+              
+              return allInterventions.map((item) => {
+                const isPriority = priorityInterventions.includes(item)
+                return (
+                  <div key={item} className="flex items-center gap-2 text-sm">
+                    <input 
+                      type="checkbox" 
+                      checked={isPriority} 
+                      readOnly
+                      className="rounded" 
+                    />
+                    <span className={isPriority ? "font-medium text-foreground" : "text-muted-foreground"}>
+                      {item}
+                    </span>
+                  </div>
+                )
+              })
+            })()}
           </div>
+          {(() => {
+            const priorityInterventions = identifyPriorityInterventions(data, userInput)
+            if (priorityInterventions.length > 0) {
+              return (
+                <p className="text-sm text-muted-foreground mt-4">
+                  根據您的回答，我們識別出 <span className="font-medium text-foreground">{priorityInterventions.length}</span> 個優先介入面向
+                </p>
+              )
+            }
+            return null
+          })()}
         </Card>
 
         <Card className="p-6 bg-muted text-center space-y-4">
