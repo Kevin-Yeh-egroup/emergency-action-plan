@@ -1,20 +1,26 @@
 "use client"
 
-import { useEffect, Suspense } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { AlertCircle, Home, RefreshCw } from "lucide-react"
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
 
 function NotFoundContent() {
-  const searchParams = useSearchParams()
-  const errorId = searchParams?.get("errorId") || searchParams?.get("id")
-  const errorCode = searchParams?.get("code")
+  const [errorInfo, setErrorInfo] = useState<{ id?: string; code?: string }>({})
 
   useEffect(() => {
-    // 記錄 404 錯誤
+    // 在客戶端獲取 URL 參數
     if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search)
+      const errorId = params.get("errorId") || params.get("id")
+      const errorCode = params.get("code")
+      
+      if (errorId || errorCode) {
+        setErrorInfo({ id: errorId || undefined, code: errorCode || undefined })
+      }
+
+      // 記錄 404 錯誤
       console.error("404 錯誤:", {
         path: window.location.pathname,
         errorId,
@@ -22,7 +28,7 @@ function NotFoundContent() {
         timestamp: new Date().toISOString(),
       })
     }
-  }, [errorId, errorCode])
+  }, [])
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -39,14 +45,14 @@ function NotFoundContent() {
           <p className="text-sm text-muted-foreground">
             抱歉，您要尋找的頁面不存在或已被移除。
           </p>
-          {errorId && (
+          {errorInfo.id && (
             <p className="text-xs text-muted-foreground font-mono mt-2">
-              錯誤 ID: {errorId}
+              錯誤 ID: {errorInfo.id}
             </p>
           )}
-          {errorCode && (
+          {errorInfo.code && (
             <p className="text-xs text-muted-foreground mt-1">
-              錯誤代碼: {errorCode}
+              錯誤代碼: {errorInfo.code}
             </p>
           )}
         </div>
