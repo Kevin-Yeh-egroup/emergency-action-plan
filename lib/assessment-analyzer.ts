@@ -9,7 +9,7 @@ interface AssessmentData {
 
 interface UserInputData {
   text: string
-  files: File[]
+  files?: File[] | unknown[]
 }
 
 /**
@@ -118,12 +118,20 @@ function analyzeUserInput(text: string): {
  * 判斷優先介入面向
  */
 export function identifyPriorityInterventions(
-  answers: AssessmentData,
-  userInput: UserInputData
+  answers: AssessmentData | null | undefined,
+  userInput: UserInputData | null | undefined
 ): string[] {
+  // 處理空值情況
+  if (!answers) {
+    answers = {}
+  }
+  if (!userInput) {
+    userInput = { text: "", files: [] }
+  }
+  
   const priorities: string[] = []
   const categoryScores = calculateCategoryScores(answers)
-  const inputAnalysis = analyzeUserInput(userInput.text)
+  const inputAnalysis = analyzeUserInput(userInput.text || "")
 
   // 計算各類別的百分比（相對於滿分）
   const categoryPercentages = {
