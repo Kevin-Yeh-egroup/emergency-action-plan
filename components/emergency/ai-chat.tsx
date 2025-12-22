@@ -9,6 +9,7 @@ import { Send } from "lucide-react"
 interface AIChatProps {
   onComplete: () => void
   onBack: () => void
+  onBackToResult?: () => void
 }
 
 interface Message {
@@ -18,7 +19,7 @@ interface Message {
 
 const initialMessages: Message[] = [{ role: "ai", content: "這件事大約從什麼時候開始？" }]
 
-export default function AIChat({ onComplete, onBack }: AIChatProps) {
+export default function AIChat({ onComplete, onBack, onBackToResult }: AIChatProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState("")
 
@@ -80,8 +81,13 @@ export default function AIChat({ onComplete, onBack }: AIChatProps) {
 
         <div className="flex gap-4">
           <Button variant="outline" onClick={onBack} className="flex-1 bg-transparent">
-            返回快篩
+            返回評估
           </Button>
+          {onBackToResult && (
+            <Button variant="outline" onClick={onBackToResult} className="flex-1 bg-transparent">
+              返回結果頁
+            </Button>
+          )}
           <Button onClick={onComplete} className="flex-1">
             完成補問
           </Button>

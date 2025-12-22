@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button"
 import type { FlowStep } from "@/app/page"
 
 const steps = [
-  { id: "scenario", label: "情境" },
-  { id: "input", label: "輸入" },
-  { id: "assessment", label: "快篩" },
+  { id: "assessment", label: "家庭財務韌性快速評估" },
   { id: "ai-chat", label: "問問AI" },
   { id: "result", label: "初判" },
   { id: "action", label: "行動" },

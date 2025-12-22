@@ -56,7 +56,7 @@ export default function ActionGuidance({ onBack, onRestart }: ActionGuidanceProp
 
         <div className="flex gap-4">
           <Button variant="outline" onClick={onRestart} className="flex-1 bg-transparent">
-            回到情境入口
+            重新開始評估
           </Button>
           <Button variant="outline" onClick={onBack} className="flex-1 bg-transparent">
             返回結果頁

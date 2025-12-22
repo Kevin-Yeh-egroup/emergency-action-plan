@@ -16,18 +16,65 @@ interface AssessmentResultProps {
 
 export default function AssessmentResult({ score, data, userInput = { text: "", files: [] }, onContinue, onAIChat }: AssessmentResultProps) {
   const getLevel = () => {
-    if (score >= 75) return { level: "財務韌性良好", color: "text-green-600", icon: CheckCircle2, signal: "🟢" }
-    if (score >= 60) return { level: "接近韌性", color: "text-blue-600", icon: AlertTriangle, signal: "🟡" }
-    if (score >= 40) return { level: "財務脆弱", color: "text-orange-600", icon: AlertTriangle, signal: "🟡" }
-    return { level: "極度脆弱", color: "text-red-600", icon: AlertCircle, signal: "🔴" }
+    // 財務韌性良好（75-100分）
+    if (score >= 75 && score <= 100) {
+      return { 
+        level: "財務韌性良好", 
+        color: "text-green-600", 
+        bgColor: "bg-green-50 dark:bg-green-950/20",
+        borderColor: "border-green-200 dark:border-green-800",
+        icon: CheckCircle2, 
+        signal: "🟢",
+        signalColor: "text-green-600"
+      }
+    }
+    // 接近韌性（60-74分）
+    if (score >= 60 && score <= 74) {
+      return { 
+        level: "接近韌性", 
+        color: "text-yellow-600", 
+        bgColor: "bg-yellow-50 dark:bg-yellow-950/20",
+        borderColor: "border-yellow-200 dark:border-yellow-800",
+        icon: AlertTriangle, 
+        signal: "🟡",
+        signalColor: "text-yellow-600"
+      }
+    }
+    // 財務脆弱（40-59分）
+    if (score >= 40 && score <= 59) {
+      return { 
+        level: "財務脆弱", 
+        color: "text-orange-600", 
+        bgColor: "bg-orange-50 dark:bg-orange-950/20",
+        borderColor: "border-orange-200 dark:border-orange-800",
+        icon: AlertTriangle, 
+        signal: "🟠",
+        signalColor: "text-orange-600"
+      }
+    }
+    // 極度脆弱（0-39分）
+    return { 
+      level: "極度脆弱", 
+      color: "text-red-600", 
+      bgColor: "bg-red-50 dark:bg-red-950/20",
+      borderColor: "border-red-200 dark:border-red-800",
+      icon: AlertCircle, 
+      signal: "🔴",
+      signalColor: "text-red-600"
+    }
   }
 
-  const { level, color, icon: Icon, signal } = getLevel()
+  const { level, color, bgColor, borderColor, icon: Icon, signal, signalColor } = getLevel()
 
   const getRecommendation = () => {
-    if (score >= 75) return "可立即啟動行動"
-    if (score >= 60) return "需要補充資料再行動"
-    return "建議專人介入協助啟動"
+    // 財務韌性良好（75-100分）：恭喜、正面鼓勵
+    if (score >= 75) return "恭喜！您的財務韌性良好，可以自主處理財務事務"
+    // 接近韌性（60-74分）：需要一些協助
+    if (score >= 60) return "建議多學習財務知識、進行更深入的評估後再行動，或諮詢專業人員獲得更多協助"
+    // 財務脆弱（40-59分）：需要更多協助
+    if (score >= 40) return "建議尋求專業人員協助討論財務狀況，制定改善計畫"
+    // 極度脆弱（0-39分）：強烈建議專人介入
+    return "強烈建議立即尋求專業人員介入協助，共同討論並處理財務問題"
   }
 
   return (
@@ -38,18 +85,26 @@ export default function AssessmentResult({ score, data, userInput = { text: "", 
           <p className="text-muted-foreground">根據你的回答，我們整理出以下評估</p>
         </div>
 
-        <Card className="p-8 space-y-6">
-          <div className="text-center space-y-4">
-            <div className="text-6xl">{signal}</div>
-            <div>
+        <Card className={`p-8 space-y-6 ${bgColor} border-2 ${borderColor}`}>
+          <div className="text-center space-y-6">
+            <div className="flex flex-col items-center gap-4">
+              <div className={`text-8xl ${signalColor} drop-shadow-lg`}>{signal}</div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">韌性等級判定</p>
+                <p className={`text-3xl font-bold ${color} flex items-center justify-center gap-2`}>
+                  <Icon className="h-8 w-8" />
+                  {level}
+                </p>
+              </div>
+            </div>
+            <div className="pt-4 border-t border-border/50">
               <p className="text-sm text-muted-foreground mb-2">總分</p>
               <p className="text-5xl font-bold">
                 {formatNumber(score)} <span className="text-2xl text-muted-foreground">/ {formatNumber(100)}</span>
               </p>
             </div>
-            <div>
-              <p className={`text-2xl font-semibold ${color}`}>{level}</p>
-              <p className="text-lg text-muted-foreground mt-2">{getRecommendation()}</p>
+            <div className="pt-2">
+              <p className="text-lg text-muted-foreground">{getRecommendation()}</p>
             </div>
           </div>
         </Card>

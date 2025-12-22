@@ -15,7 +15,7 @@ export default function Header() {
         </div>
         <nav className="hidden md:flex items-center gap-8">
           <a href="#phases" className="text-sm text-muted-foreground hover:text-foreground transition">
-            4階段
+            2階段
           </a>
           <a href="#structure" className="text-sm text-muted-foreground hover:text-foreground transition">
             工作架構

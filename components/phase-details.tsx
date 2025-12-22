@@ -4,58 +4,6 @@ import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const phaseDetails = {
-  audience: {
-    title: "議題受眾",
-    description: "識別和理解目標族群",
-    sections: [
-      {
-        title: "可能遇到此議題的族群",
-        items: [
-          "因突發事故或疾病導致收入中斷／支出暴增的家庭",
-          "單親家庭、主要照顧者失能或突然住院者",
-          "弱勢邊緣戶，遇急難但不清楚可用資源",
-          "臨時生活陷困但不知道第一步該做什麼的人",
-          "對急難資訊量過大、無法理解流程的一般民眾",
-        ],
-      },
-      {
-        title: "關鍵痛點",
-        items: [
-          "急迫時間內缺乏清楚流程",
-          "不知道哪些資料是必要的",
-          "不知道有哪些協助方式",
-          "容易誤信錯誤來源或民間謠言",
-        ],
-      },
-    ],
-  },
-  strategy: {
-    title: "接觸策略",
-    description: "多渠道結合（Google Ads × SEO × AISEO × EEAT）",
-    sections: [
-      {
-        title: "Google Ads",
-        items: ["急難處理三步驟（安全素材）", "溫暖陪伴感視覺", "CTA：遇到急難，先不用慌"],
-      },
-      {
-        title: "SEO 策略",
-        items: [
-          "Primary：急難如何處理、急難流程、收入中斷怎麼辦",
-          "Secondary：家庭突發狀況、突然住院支出",
-          "Content Cluster：流程、案例、checklist、各縣市資源",
-        ],
-      },
-      {
-        title: "EEAT 可信度建構",
-        items: [
-          "作者為財務健康諮詢師",
-          "引用實務經驗（無個資）",
-          "放上認證（AIEC、IT Matters Award等）",
-          "提供透明流程與免責聲明",
-        ],
-      },
-    ],
-  },
   tools: {
     title: "互動工具",
     description: "彈性模組化設計",
@@ -89,6 +37,36 @@ const phaseDetails = {
       },
     ],
   },
+  retention: {
+    title: "留存策略",
+    description: "透過登入誘因、回訪提醒和年度回顧建立持久用戶關係",
+    sections: [
+      {
+        title: "登入誘因",
+        items: [
+          "個人化財務健康報告",
+          "定期評估與追蹤",
+          "專屬資源推薦",
+        ],
+      },
+      {
+        title: "回訪提醒",
+        items: [
+          "定期財務狀況檢查",
+          "重要事件提醒",
+          "新資源通知",
+        ],
+      },
+      {
+        title: "年度回顧",
+        items: [
+          "年度財務韌性報告",
+          "成長歷程回顧",
+          "未來規劃建議",
+        ],
+      },
+    ],
+  },
 }
 
 export default function PhaseDetails() {
@@ -100,11 +78,10 @@ export default function PhaseDetails() {
           <p className="text-muted-foreground text-lg">按階段查看完整細節</p>
         </div>
 
-        <Tabs defaultValue="audience" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="audience">階段1：受眾</TabsTrigger>
-            <TabsTrigger value="strategy">階段2：策略</TabsTrigger>
-            <TabsTrigger value="tools">階段3–4：工具</TabsTrigger>
+        <Tabs defaultValue="tools" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="tools">階段3：互動工具</TabsTrigger>
+            <TabsTrigger value="retention">階段4：留存策略</TabsTrigger>
           </TabsList>
 
           {Object.entries(phaseDetails).map(([key, phase]) => (

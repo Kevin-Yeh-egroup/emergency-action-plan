@@ -313,8 +313,6 @@ export default function QuickAssessment({ onComplete, onBack }: QuickAssessmentP
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1)
       window.scrollTo({ top: 0, behavior: "smooth" })
-    } else {
-      onBack()
     }
   }
 
@@ -322,7 +320,7 @@ export default function QuickAssessment({ onComplete, onBack }: QuickAssessmentP
     <div className="container mx-auto px-4 py-12">
       <div className="mx-auto max-w-3xl space-y-8">
         <div className="space-y-4">
-          <h1 className="text-3xl font-bold">快速快篩</h1>
+          <h1 className="text-3xl font-bold">家庭財務韌性快速評估</h1>
           <p className="text-muted-foreground">這不是審核，也不是資格判定。只是幫你把狀況變清楚</p>
 
           <Card className="p-4">
@@ -384,11 +382,13 @@ export default function QuickAssessment({ onComplete, onBack }: QuickAssessmentP
         </Card>
 
         <div className="flex gap-4">
-          <Button variant="outline" onClick={handleBack} className="flex-1 bg-transparent">
-            返回
-          </Button>
-          <Button onClick={handleNext} className="flex-1">
-            {currentPage < assessmentCategories.length - 1 ? "下一步" : "完成快篩"}
+          {currentPage > 0 && (
+            <Button variant="outline" onClick={handleBack} className="flex-1 bg-transparent">
+              返回
+            </Button>
+          )}
+          <Button onClick={handleNext} className={currentPage > 0 ? "flex-1" : "flex-1"}>
+            {currentPage < assessmentCategories.length - 1 ? "下一步" : "完成評估"}
           </Button>
         </div>
       </div>

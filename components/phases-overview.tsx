@@ -4,20 +4,6 @@ import { Card } from "@/components/ui/card"
 
 const phases = [
   {
-    number: 1,
-    title: "議題受眾",
-    icon: "👥",
-    description: "識別可能遇到急難的族群，深入理解他們的痛點和需求",
-    color: "from-blue-500/20 to-blue-500/5",
-  },
-  {
-    number: 2,
-    title: "接觸策略",
-    icon: "🎯",
-    description: "透過Google Ads、SEO、AISEO和EEAT建構多渠道接觸方案",
-    color: "from-cyan-500/20 to-cyan-500/5",
-  },
-  {
     number: 3,
     title: "互動工具",
     icon: "⚙️",
@@ -38,10 +24,10 @@ export default function PhasesOverview() {
     <section id="phases" className="py-20 md:py-28 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">4階段完整規劃</h2>
-          <p className="text-muted-foreground text-lg">從認識受眾到建立持久關係</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">2階段完整規劃</h2>
+          <p className="text-muted-foreground text-lg">從互動工具到建立持久關係</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
           {phases.map((phase) => (
             <Card
               key={phase.number}
