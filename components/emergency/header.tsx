@@ -23,7 +23,7 @@ export default function Header({ currentStep, onStepChange }: HeaderProps) {
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold">急難救助專區</h1>
+            <h1 className="text-lg font-semibold">家庭財務韌性快速評估</h1>
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 暫停
