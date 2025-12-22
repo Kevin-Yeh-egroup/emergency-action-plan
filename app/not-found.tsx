@@ -6,9 +6,6 @@ import { Card } from "@/components/ui/card"
 import { AlertCircle, Home, RefreshCw } from "lucide-react"
 import Link from "next/link"
 
-// 強制動態渲染，避免預渲染問題
-export const dynamic = 'force-dynamic'
-
 export default function NotFound() {
   const [errorInfo, setErrorInfo] = useState<{ id?: string; code?: string }>({})
 
